@@ -1,4 +1,4 @@
-from mimetypes import init
+from __future__ import annotations
 from .game import Game
 from .sudoku import Sudoku
 

@@ -10,4 +10,4 @@ class Sudoku:
         text_directory = path_list[0:len(path_list)-1]
         filepath = "/".join(text_directory) + "/" + filename
         with open(filepath) as file:
-            print(file.read())
+            print(file.read())        

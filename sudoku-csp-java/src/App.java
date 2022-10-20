@@ -1,6 +1,7 @@
 public class App {
     public static void main(String[] args) throws Exception {
-        start("Sudoku1.txt");
+        System.out.println(System.getProperty("user.dir"));
+        start("sudoku-csp-java/Sudoku1.txt");
     }
 
     /**

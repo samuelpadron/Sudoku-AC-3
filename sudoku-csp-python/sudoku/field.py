@@ -5,6 +5,7 @@ class Field:
     def __init__(self, init_value:int = None) -> None:
         if init_value is None:
             self.domain = [x for x in range(0,10)]
+            self.value = 0
         else:
             self.value = init_value
             self.domain = []

@@ -53,7 +53,3 @@ class Field:
             "."
         else:
             str(self.value)
-        
-    @staticmethod
-    def from_value(init_value: int) -> Field:
-        pass

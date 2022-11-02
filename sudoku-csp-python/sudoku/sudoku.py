@@ -17,7 +17,7 @@ class Sudoku:
             for j in range(9):
                 if j == 3 or j == 6:
                     output += "║ "
-                output += self.board[i][j].__str__() + " "
+                output += str(self.board[i][j]) + " "
 
             output += "║\n"
         
@@ -51,7 +51,7 @@ class Sudoku:
             print(f"error while reading the file: {filename}")
         for line in Lines:
             grid.append(list(map(lambda x : Field() if int(x) == 0 else Field(int(x)) ,list(line.replace("\n","")))))
-    
+            
         return grid            
 
 

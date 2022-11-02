@@ -51,6 +51,6 @@ class Field:
         
     def __str__(self):
         if self.value == 0:
-            "."
+            return "."
         else:
-            str(self.value)
+            return str(self.value)

@@ -51,9 +51,28 @@ class Sudoku:
             print(f"error while reading the file: {filename}")
         for line in Lines:
             grid.append(list(map(lambda x : Field() if int(x) == 0 else Field(int(x)) ,list(line.replace("\n","")))))
-            
+        self.add_neighbours(grid)
         return grid            
 
 
     def add_neighbours(self, grid: list[list[Field]]) -> None:
+        # For each fiedl, create his neighbours with the constraints
+    
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                print(i,j)
+                neighbour = []
+                neighbour.append(grid[i].copy)
+                neighbour.remove(grid[i][j])
+                for y in range(0,9):
+                    if y != i:
+                        neighbour.append(grid[y][j])
+                z = int(i/3)
+                z_2 = int(j/3)
+                for new_i in range(len(grid)):
+                    for new_j in range(len(grid[0])):
+                        if int(new_i/3) == z and int(new_j/3) == z_2 and (new_i != 1 or new_j != j):
+                            neighbour.append(grid[new_i][new_j])
+        print(neighbour)
+        print('\n','\n')
         pass

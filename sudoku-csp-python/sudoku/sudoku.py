@@ -84,4 +84,11 @@ class Sudoku:
 
       
     def add_neighbours(self, grid: list[list[Field]]) -> None:
+        for row in range(len(grid)):
+            for col in range(len(grid[0])):
+                neighbours = []
+                neighbours.append(self.add_horizontal_neighbours())
+                neighbours.append(self.add_vertical_neighbours())
+                neighbours.append(self.add_square_neighbours())
+                grid[row][col].set_neighbours(neighbours)
         pass

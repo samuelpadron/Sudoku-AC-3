@@ -40,12 +40,13 @@ class Field:
     
     def remove_from_domain(self, value:int) -> bool:
         before = len(self.domain)
-        domain = self.get_domain()
-        if value in domain:
-            domain.remove(value)
 
-        if len(self.get_domain()) == 1:
+        if value in self.domain:
+            self.domain.remove(value)
+
+        if len(self.domain) == 1:
             self.set_value(self.domain[0])
+            print("value settled")
 
         if len(self.domain) == before:
             return False

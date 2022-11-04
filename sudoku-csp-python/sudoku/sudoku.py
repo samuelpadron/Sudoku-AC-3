@@ -91,4 +91,4 @@ class Sudoku:
                 neighbours.extend(self.add_vertical_neighbours(col, row, grid))
                 neighbours.extend(self.add_square_neighbours(col, row, grid))
                 grid[row][col].set_neighbours(neighbours)
-        pass
+        

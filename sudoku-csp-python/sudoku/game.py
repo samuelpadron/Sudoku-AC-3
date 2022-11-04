@@ -15,9 +15,7 @@ class Game:
         # meaning for a value in field_a there are no values different from that in field_b and therefore remove that value from field_a.
         if len(field_b.get_domain()) == 1:
             field_a.remove_from_domain(field_b.get_value())
-            print("removed: ", field_b.get_value())
-        if len(field_a.get_domain()) == 1:
-            print(field_a.get_domain())
+            #print("removed:", field_b.get_value(), " remaining:", field_a.get_domain())
             return
         
             
@@ -42,14 +40,13 @@ class Game:
         while not queue.empty():
             ((_,_,_),(field_a, field_b)) = queue.get()
             #print(field_a.get_domain(), field_b.get_domain())
-            print("size: ",queue.qsize())
             size = len(field_a.get_domain())
             self.revise(field_a, field_b)
             if len(field_a.get_domain()) == 0:
                 return False
             if size != len(field_a.get_domain()): #HERE USE REMOVE_FROM_DOMAIN FUNCTION INSTEAD
                 for neighbour in field_a.get_neighbours():
-                    if neighbour != field_b and len(neighbour.get_domain()) > 1: #check if this is possible because of python objects bullshit
+                    if neighbour != field_b :#and len(neighbour.get_domain()) > 1: #check if this is possible because of python objects bullshit
                         queue.put(((len(neighbour.get_domain()),len(field_a.get_domain()), next(index)), (neighbour, field_a)))
         return True
 
@@ -60,5 +57,6 @@ class Game:
             bool: true if the sudoku solution is correct
         """
         #TODO
+        
         return True
 

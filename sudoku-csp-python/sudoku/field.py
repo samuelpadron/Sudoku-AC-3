@@ -33,7 +33,7 @@ class Field:
     #domain functions
 
     def get_domain(self) -> list(int):
-        return self.domain()
+        return self.domain
 
     def get_domain_size(self) -> int:
         return len(self.domain)

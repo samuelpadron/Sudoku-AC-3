@@ -54,25 +54,34 @@ class Sudoku:
         self.add_neighbours(grid)
         return grid            
 
+    def add_vertical_neighbours(self, col:int, row:int, grid:list[list[Field]]) -> list[Field]:
+        neighbours = [el[col] for el in grid]
+        if row < len(grid):
+            neighbours = neighbours[0:row] + neighbours[row+1:]    
+        else:
+            neighbours = neighbours[:-1]
+        
+        return neighbours
 
-    def add_neighbours(self, grid: list[list[Field]]) -> None:
-        # For each fiedl, create his neighbours with the constraints
-    
+    def add_horizontal_neighbours(self, col:int, row: int, grid:list[list[Field]]):
+        neighbours = grid[row]
+        if col < len(grid[0]):
+            neighbours = neighbours[0:col] + neighbours[col+1:]
+        else:
+            neighbours = neighbours[:-1]
+        
+        return neighbours
+
+    def add_square_neighbours(self, col:int, row:int, grid:list[list[Field]]):
+        neighbours = []
+        square = (int(row/3), int(col/3))
         for i in range(len(grid)):
             for j in range(len(grid[0])):
-                print(i,j)
-                neighbour = []
-                neighbour.append(grid[i].copy)
-                neighbour.remove(grid[i][j])
-                for y in range(0,9):
-                    if y != i:
-                        neighbour.append(grid[y][j])
-                z = int(i/3)
-                z_2 = int(j/3)
-                for new_i in range(len(grid)):
-                    for new_j in range(len(grid[0])):
-                        if int(new_i/3) == z and int(new_j/3) == z_2 and (new_i != 1 or new_j != j):
-                            neighbour.append(grid[new_i][new_j])
-        print(neighbour)
-        print('\n','\n')
+                next_square = (int(i/3), int(j/3))
+                if square == next_square and (row != i or col != j):
+                    neighbours.append(grid[i][j])
+        return neighbours
+
+      
+    def add_neighbours(self, grid: list[list[Field]]) -> None:
         pass

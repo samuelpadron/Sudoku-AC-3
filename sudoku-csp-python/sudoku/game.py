@@ -46,7 +46,7 @@ class Game:
                 return False
             if size != len(field_a.get_domain()): #HERE USE REMOVE_FROM_DOMAIN FUNCTION INSTEAD
                 for neighbour in field_a.get_neighbours():
-                    if neighbour != field_b :#and len(neighbour.get_domain()) > 1: #check if this is possible because of python objects bullshit
+                    if neighbour != field_b and len(neighbour.get_domain()) > 1: #check if this is possible because of python objects bullshit
                         queue.put(((len(neighbour.get_domain()),len(field_a.get_domain()), next(index)), (neighbour, field_a)))
         return True
 

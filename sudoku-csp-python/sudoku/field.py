@@ -8,7 +8,7 @@ class Field:
             self.value = 0
         else:
             self.value = init_value
-            self.domain = []
+            self.domain = [init_value]
         
     def get_value(self) -> int:
         return self.value
@@ -40,8 +40,11 @@ class Field:
     
     def remove_from_domain(self, value:int) -> bool:
         before = len(self.domain)
-        self.domain.remove(value)
-        if len(self.domain == 1):
+        domain = self.get_domain()
+        if value in domain:
+            domain.remove(value)
+
+        if len(self.get_domain()) == 1:
             self.set_value(self.domain[0])
 
         if len(self.domain) == before:

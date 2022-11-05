@@ -46,7 +46,6 @@ class Field:
 
         if len(self.domain) == 1:
             self.set_value(self.domain[0])
-            print("value settled")
 
         if len(self.domain) == before:
             return False

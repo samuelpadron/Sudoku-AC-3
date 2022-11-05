@@ -11,11 +11,8 @@ class Game:
 
 
     def revise(self, field_a, field_b) -> None:
-        #remove all the values in the domain of field_a that have no matching value in the domain of field_b
-        # meaning for a value in field_a there are no values different from that in field_b and therefore remove that value from field_a.
         if len(field_b.get_domain()) == 1:
             field_a.remove_from_domain(field_b.get_value())
-            #print("removed:", field_b.get_value(), " remaining:", field_a.get_domain())
             return
         
             
@@ -27,7 +24,6 @@ class Game:
             bool: true if the constraints can be satisfied, else false
         """
         #TODO
-        #define all the constraints and domains for each field
         index = count(0)
         fields = self.sudoku.board
         queue = PriorityQueue()
@@ -39,7 +35,6 @@ class Game:
                         queue.put(((len(field.get_domain()),len(neighbour.get_domain()), next(index)),(field, neighbour)))
         while not queue.empty():
             ((_,_,_),(field_a, field_b)) = queue.get()
-            #print(field_a.get_domain(), field_b.get_domain())
             size = len(field_a.get_domain())
             self.revise(field_a, field_b)
             if len(field_a.get_domain()) == 0:

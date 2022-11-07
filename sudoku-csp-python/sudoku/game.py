@@ -1,6 +1,8 @@
 from .sudoku import Sudoku
 from queue import PriorityQueue
-from itertools import count
+
+from itertools import count, chain
+from .field import Field
 class Game:
     def __init__(self, sudoku: Sudoku) -> None:
         self.sudoku = sudoku
@@ -10,9 +12,12 @@ class Game:
 
 
 
-    def revise(self, field_a, field_b) -> None:
+    def revise(self, field_a: Field, field_b: Field) -> None:
+        s = set(chain(list(map(lambda x: x.get_domain(),field_a.get_neighbours()))))
+        print(s)
         if len(field_b.get_domain()) == 1:
             field_a.remove_from_domain(field_b.get_value())
+            #
             return
         
             

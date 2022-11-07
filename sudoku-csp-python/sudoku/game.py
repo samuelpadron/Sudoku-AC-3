@@ -13,11 +13,10 @@ class Game:
 
 
     def revise(self, field_a: Field, field_b: Field) -> None:
-        s = set(chain(list(map(lambda x: x.get_domain(),field_a.get_neighbours()))))
-        print(s)
+        taken_values = set(list(chain.from_iterable(map(lambda x: x.get_domain(),field_a.get_neighbours()))))
+        
         if len(field_b.get_domain()) == 1:
             field_a.remove_from_domain(field_b.get_value())
-            #
             return
         
             

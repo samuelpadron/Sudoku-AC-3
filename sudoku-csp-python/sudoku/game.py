@@ -15,6 +15,10 @@ class Game:
     def revise(self, field_a: Field, field_b: Field) -> None:
         taken_values = list(set(list(chain.from_iterable(map(lambda x: x.get_domain(),field_a.get_neighbours())))))
         print(taken_values)
+        if len(taken_values) == 8 :
+            res = [value for value in range(1,len(taken_values)+1) if value not in taken_values] #get missing value in a list
+            field_a.domain = res
+
         if len(field_b.get_domain()) == 1:
             field_a.remove_from_domain(field_b.get_value())
             return

@@ -31,7 +31,6 @@ class Game:
         Returns:
             bool: true if the constraints can be satisfied, else false
         """
-        #TODO
         index = count(0)
         fields = self.sudoku.board
         queue = PriorityQueue()
@@ -42,8 +41,7 @@ class Game:
                     for neighbour in field.get_neighbours():
                         queue.put(((len(field.get_domain()),len(neighbour.get_domain()), next(index)),(field, neighbour)))
         while not queue.empty():
-            ((_,_,_),(field_a, field_b)) = queue.get()
-            size = len(field_a.get_domain())
+            ((size,_,_),(field_a, field_b)) = queue.get()
             self.revise(field_a, field_b)
             if len(field_a.get_domain()) == 0:
                 return False

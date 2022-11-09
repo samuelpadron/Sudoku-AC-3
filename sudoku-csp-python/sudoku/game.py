@@ -1,7 +1,7 @@
 from .sudoku import Sudoku
 from queue import PriorityQueue
 
-from itertools import count, chain
+from itertools import count, chain, product
 from .field import Field
 class Game:
     def __init__(self, sudoku: Sudoku) -> None:
@@ -52,13 +52,34 @@ class Game:
                         queue.put(((len(neighbour.get_domain()),len(field_a.get_domain()), next(index)), (neighbour, field_a)))
         return True
 
+    def list_is_valid(self, listOfElems):
+        ''' Check if given list contains any duplicates '''
+        if len(listOfElems) == len(set(listOfElems)):
+            return True
+        else:
+            return False
     def valid_solution(self) -> bool:
         """Checks the validity of a sudoku solution
 
         Returns:
             bool: true if the sudoku solution is correct
         """
-        #TODO
+
+        b = True
+        board = self.sudoku.board
         
+        for row, col in product(range(len(board)), range(len(board[0]))):
+            b = self.list_is_valid(list(map(lambda x: x.get_value() ,[el[col] for el in board])))
+            if not b:
+                return False
+            b = self.list_is_valid(list(map(lambda x: x.get_value(), board[col])))
+            if not b:
+                return False
+            if col in [0,3,6] and row in [0,3,6]:
+                l = list(map(lambda x: x.get_value(), board[row][col].get_neighbours()[16:24]))
+                l.append(board[row][col].get_value())
+                b = self.list_is_valid(l)
+                if not b:
+                    return False
         return True
 

@@ -5,7 +5,7 @@ from .sudoku import Sudoku
 class App:
     def __init__(self) -> None:
         #filepath = input("Enter a sudoku text file\n")
-        self.start("Sudoku3.txt")
+        self.start("Sudoku4.txt")
 
     def start(self, filepath: str) -> None:
         game1 = Game(Sudoku(filepath))

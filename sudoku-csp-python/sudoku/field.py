@@ -32,6 +32,9 @@ class Field:
     
     #domain functions
 
+    def set_domain(self, new_domain:list):
+        self.domain = new_domain
+
     def get_domain(self) -> list(int):
         return self.domain
 

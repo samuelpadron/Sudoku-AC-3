@@ -12,16 +12,20 @@ class Game:
 
 
 
-    def revise(self, field_a: Field, field_b: Field) -> None:
-        taken_values = list(set(list(chain.from_iterable(map(lambda x: x.get_domain(),field_a.get_neighbours())))))
-        if len(taken_values) == 8 :
-            res = [value for value in range(1,10) if value not in taken_values] #get missing value in a list
-            field_a.domain = res
-            field_a.set_value(res[0])
+    def revise(self, field_a: Field, field_b: Field) -> bool:
+        neighbour1, neighbour2, neighbour3 = field_a.get_neighbours()[0:8], field_a.get_neighbours()[8:16], field_a.get_neighbours()[16:24]
+        for neighbours in [neighbour1, neighbour2, neighbour3]:
+            taken_values = list(set(list(chain.from_iterable(map(lambda x: x.get_domain(),neighbours)))))
+            if len(taken_values) == 8:
+                res = [value for value in range(1,10) if value not in taken_values] #get missing value in a list
+                field_a.set_domain(res)
+                field_a.set_value(res[0])
+                return True
 
         if len(field_b.get_domain()) == 1:
-            field_a.remove_from_domain(field_b.get_value())
-            return
+            return field_a.remove_from_domain(field_b.get_value())
+            
+        return False
         
             
 
@@ -41,11 +45,8 @@ class Game:
                     for neighbour in field.get_neighbours():
                         queue.put(((len(field.get_domain()),len(neighbour.get_domain()), next(index)),(field, neighbour)))
         while not queue.empty():
-            ((size,_,_),(field_a, field_b)) = queue.get()
-            self.revise(field_a, field_b)
-            if len(field_a.get_domain()) == 0:
-                return False
-            if size != len(field_a.get_domain()): #HERE USE REMOVE_FROM_DOMAIN FUNCTION INSTEAD
+            ((_,_,_),(field_a, field_b)) = queue.get()
+            if len(field_a.get_domain()) > 1 and self.revise(field_a, field_b):
                 for neighbour in field_a.get_neighbours():
                     if neighbour != field_b and len(neighbour.get_domain()) > 1: #check if this is possible because of python objects bullshit
                         queue.put(((len(neighbour.get_domain()),len(field_a.get_domain()), next(index)), (neighbour, field_a)))

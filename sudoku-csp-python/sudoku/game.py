@@ -1,8 +1,10 @@
+from __future__ import annotations
 from .sudoku import Sudoku
 from queue import PriorityQueue
-
 from itertools import count, chain, product
 from .field import Field
+
+
 class Game:
     def __init__(self, sudoku: Sudoku) -> None:
         self.sudoku = sudoku
@@ -27,6 +29,7 @@ class Game:
             return field_a.remove_from_domain(field_b.get_value())
             
         return False
+    
 
     def ac_3(self) -> bool:
         """Implementation of AC-3 algorithm
@@ -51,6 +54,7 @@ class Game:
                         queue.put(((len(neighbour.get_domain()),len(field_a.get_domain()), next(index)), (neighbour, field_a)))
         return True
 
+
     def backtrack_search(self) -> bool:
         (row, col) = self.find_empty_field(self.sudoku.board)
 
@@ -67,7 +71,18 @@ class Game:
 
         return False
     
-    def guess_is_valid(self, guess, row, col) -> bool:
+    
+    def guess_is_valid(self, guess: int, row: int, col: int) -> bool:
+        """check if guess is allowed according to the rules of Sudoku
+
+        Args:
+            guess (_type_): value being guessed
+            row (_type_): row of the field where the guess is being placed
+            col (_type_): column of the field where the guess being placed
+
+        Returns:
+            bool: guess is valid
+        """
         horizontal_neighbours = list(map(lambda x: x.value, self.sudoku.board[row]))
         if guess in horizontal_neighbours:
             return False
@@ -83,6 +98,7 @@ class Game:
                     return False
 
         return True
+
 
     def find_empty_field(self, board: Sudoku) -> tuple[int, int]:
         """Find next field in the Sudoku that has no value assigned yet
@@ -100,12 +116,14 @@ class Game:
         
         return (None, None)
 
+
     def list_is_valid(self, listOfElems) -> bool:
         ''' Check if given list contains any duplicates '''
         if len(listOfElems) == len(set(listOfElems)):
             return True
         else:
             return False
+
 
     def valid_solution(self) -> bool:
         """Checks the validity of a sudoku solution
@@ -131,4 +149,3 @@ class Game:
                 if not b:
                     return False
         return True
-

@@ -10,8 +10,9 @@ class Game:
     def show_sudoku(self) -> None:
         print(self.sudoku)
 
-
-
+    def solve(self) -> bool:
+        return self.ac_3() and self.backtrack_search()
+    
     def revise(self, field_a: Field, field_b: Field) -> bool:
         neighbour1, neighbour2, neighbour3 = field_a.get_neighbours()[0:8], field_a.get_neighbours()[8:16], field_a.get_neighbours()[16:24]
         for neighbours in [neighbour1, neighbour2, neighbour3]:
@@ -26,10 +27,8 @@ class Game:
             return field_a.remove_from_domain(field_b.get_value())
             
         return False
-        
-            
 
-    def solve(self) -> bool:
+    def ac_3(self) -> bool:
         """Implementation of AC-3 algorithm
 
         Returns:
@@ -52,12 +51,62 @@ class Game:
                         queue.put(((len(neighbour.get_domain()),len(field_a.get_domain()), next(index)), (neighbour, field_a)))
         return True
 
-    def list_is_valid(self, listOfElems):
+    def backtrack_search(self) -> bool:
+        (row, col) = self.find_empty_field(self.sudoku.board)
+
+        if row is None:
+            return True
+
+        for guess in self.sudoku.board[row][col].domain: 
+            if self.guess_is_valid(guess, row, col):
+                self.sudoku.board[row][col].value = guess
+                if self.backtrack_search():
+                    return True
+            
+            self.sudoku.board[row][col].value = 0
+
+        return False
+    
+    def guess_is_valid(self, guess, row, col) -> bool:
+        horizontal_neighbours = list(map(lambda x: x.value, self.sudoku.board[row]))
+        if guess in horizontal_neighbours:
+            return False
+
+        vertical_neighbours = list(map(lambda x: x.value,[self.sudoku.board[i][col] for i in range(len(self.sudoku.board[0]))]))
+        if guess in vertical_neighbours:
+            return False
+
+        #square neighbours
+        for i in range((row//3) * 3, (row//3) * 3 + 3):
+            for j in range((col//3) * 3, (col//3) * 3 + 3):
+                if self.sudoku.board[i][j].value == guess:
+                    return False
+
+        return True
+
+    def find_empty_field(self, board: Sudoku) -> tuple[int, int]:
+        """Find next field in the Sudoku that has no value assigned yet
+
+        Args:
+            board (Sudoku): the board to check
+
+        Returns:
+            tuple[int, int]: the coordinates of the field
+        """
+        for row in range(len(board)):
+            for col in range(len(board)):
+                if board[row][col].value == 0:
+                    return (row, col)
+        
+        return (None, None)
+
+    def list_is_valid(self, listOfElems) -> bool:
         ''' Check if given list contains any duplicates '''
         if len(listOfElems) == len(set(listOfElems)):
             return True
         else:
             return False
+
     def valid_solution(self) -> bool:
         """Checks the validity of a sudoku solution
 

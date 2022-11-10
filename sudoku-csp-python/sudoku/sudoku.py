@@ -74,10 +74,10 @@ class Sudoku:
 
     def add_square_neighbours(self, col:int, row:int, grid:list[list[Field]]):
         neighbours = []
-        square = (int(row/3), int(col/3))
+        square = (int(row//3), int(col//3))
         for i in range(len(grid)):
             for j in range(len(grid[0])):
-                next_square = (int(i/3), int(j/3))
+                next_square = (int(i//3), int(j//3))
                 if square == next_square and (row != i or col != j):
                     neighbours.append(grid[i][j])
         return neighbours

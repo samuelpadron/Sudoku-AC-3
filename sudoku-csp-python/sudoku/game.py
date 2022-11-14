@@ -56,12 +56,12 @@ class Game:
 
 
     def backtrack_search(self) -> bool:
-        (row, col) = self.find_empty_field(self.sudoku.board)
+        (row, col) = self.find_empty_field(self.sudoku.board) #heuristic for empty field to be done
 
         if row is None:
             return True
 
-        for guess in self.sudoku.board[row][col].domain: 
+        for guess in self.sudoku.board[row][col].domain: #first use guesses from value heuristic 
             if self.guess_is_valid(guess, row, col):
                 self.sudoku.board[row][col].value = guess
                 if self.backtrack_search():

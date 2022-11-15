@@ -2,6 +2,8 @@ from __future__ import annotations
 from .game import Game
 from .sudoku import Sudoku
 
+
+
 class App:
     def __init__(self) -> None:
         #filepath = input("Enter a sudoku text file\n")
@@ -10,9 +12,10 @@ class App:
     def start(self, filepath: str) -> None:
         game1 = Game(Sudoku(filepath))
         game1.show_sudoku()
-
+        
         if game1.solve() and game1.valid_solution():
-            print("Solved!")
+            moves = game1.__moves__
+            print(f"Solved in {moves} moves!")
         else:
             print("Could not solve this sudoku D:")
         game1.show_sudoku()

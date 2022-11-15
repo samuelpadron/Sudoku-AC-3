@@ -4,9 +4,9 @@ from queue import PriorityQueue
 from itertools import count, chain, product
 from .field import Field
 
-
 class Game:
     def __init__(self, sudoku: Sudoku) -> None:
+        self.__moves__ = 0
         self.sudoku = sudoku
         
     def show_sudoku(self) -> None:
@@ -19,6 +19,7 @@ class Game:
         neighbour1, neighbour2, neighbour3 = field_a.get_neighbours()[0:8], field_a.get_neighbours()[8:16], field_a.get_neighbours()[16:24]
         for neighbours in [neighbour1, neighbour2, neighbour3]:
             taken_values = list(set(list(chain.from_iterable(map(lambda x: x.get_domain(),neighbours)))))
+
             if len(taken_values) == 8:
                 res = [value for value in range(1,10) if value not in taken_values] #get missing value in a list
                 field_a.set_domain(res)
@@ -56,14 +57,14 @@ class Game:
 
 
     def backtrack_search(self) -> bool:
-        (row, col) = self.find_empty_field(self.sudoku.board) #heuristic for empty field to be done
-
-        if row is None:
+        field = self.find_empty_field(self.sudoku.board) #heuristic for empty field to be done
+        self.__moves__ += 1
+        if field is None:
             return True
 
-        for guess in self.sudoku.board[row][col].domain: #first use guesses from value heuristic 
+        for guess in field.get_domain(): #first use guesses from value heuristic 
             if self.guess_is_valid(guess, row, col):
-                self.sudoku.board[row][col].value = guess
+                self.sudoku.field.set_value(guess)
                 if self.backtrack_search():
                     return True
             
@@ -99,6 +100,15 @@ class Game:
 
         return True
 
+    def find_by_minimum_remaining_value_heuristic(self, board: Sudoku):
+        return sorted(map(lambda x: (x, len(x.get_domain())), self.find_empty_fields(board)))[0]
+
+    def find_empty_fields(self, board:Sudoku):
+        empty_fields = []
+        for row in range(len(board)):
+            for col in range(len(board)):
+                if board[row][col].value == 0:
+                    empty_fields.append(board[row][col])
 
     def find_empty_field(self, board: Sudoku) -> tuple[int, int]:
         """Find next field in the Sudoku that has no value assigned yet
@@ -112,9 +122,9 @@ class Game:
         for row in range(len(board)):
             for col in range(len(board)):
                 if board[row][col].value == 0:
-                    return (row, col)
+                    return board[row][col]
         
-        return (None, None)
+        return None
 
 
     def list_is_valid(self, listOfElems) -> bool:

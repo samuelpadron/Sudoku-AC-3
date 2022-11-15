@@ -16,15 +16,15 @@ class Game:
         return self.ac_3() and self.backtrack_search()
     
     def revise(self, field_a: Field, field_b: Field) -> bool:
-        neighbour1, neighbour2, neighbour3 = field_a.get_neighbours()[0:8], field_a.get_neighbours()[8:16], field_a.get_neighbours()[16:24]
-        for neighbours in [neighbour1, neighbour2, neighbour3]:
-            taken_values = list(set(list(chain.from_iterable(map(lambda x: x.get_domain(),neighbours)))))
-
-            if len(taken_values) == 8:
-                res = [value for value in range(1,10) if value not in taken_values] #get missing value in a list
-                field_a.set_domain(res)
-                field_a.set_value(res[0])
-                return True
+        #neighbour1, neighbour2, neighbour3 = field_a.get_neighbours()[0:8], field_a.get_neighbours()[8:16], field_a.get_neighbours()[16:24]
+        #for neighbours in [neighbour1, neighbour2, neighbour3]:
+        #    taken_values = list(set(list(chain.from_iterable(map(lambda x: x.get_domain(),neighbours)))))
+#
+        #    if len(taken_values) == 8:
+        #        res = [value for value in range(1,10) if value not in taken_values] #get missing value in a list
+        #        field_a.set_domain(res)
+        #        field_a.set_value(res[0])
+        #        return True
 
         if len(field_b.get_domain()) == 1:
             return field_a.remove_from_domain(field_b.get_value())
@@ -57,8 +57,9 @@ class Game:
 
 
     def backtrack_search(self) -> bool:
-        field = self.find_empty_field(self.sudoku.board)
-        #field = self.find_by_minimum_remaining_value_heuristic(self.sudoku.board) #heuristic for empty field to be done
+        field = self.find_empty_field(self.sudoku.board) #no heuristic
+        #field = self.find_by_minimum_remaining_values_heuristic(self.sudoku.board) #heuristic for empty field to be done
+        #field = self.find_by_max_degree_heuristuc(self.sudoku.board)
         self.__moves__ += 1
         if field is None:
             return True
@@ -70,7 +71,6 @@ class Game:
                     return True
             
             field.value = 0
-
         return False
     
     
@@ -85,18 +85,24 @@ class Game:
         Returns:
             bool: guess is valid
         """
-        neighbours = list(map(lambda x: x.value, field.get_neighbours()))
+        neighbours = list(map(lambda x: x.get_value(), field.get_neighbours()))
         if guess in neighbours:
             return False
         return True
 
-    def find_by_minimum_remaining_value_heuristic(self, board: Sudoku):
+    def find_by_max_degree_heuristuc(self, board: Sudoku) -> Field:
+        empty_fields = self.find_empty_fields(board)
+        if len(empty_fields) == 0:
+            return None
+        return sorted(map(lambda x: (x, len(list(filter(lambda x: x.get_value() == 0, x.get_neighbours())))), empty_fields), key=lambda x: x[1])[-1][0]
+
+    def find_by_minimum_remaining_values_heuristic(self, board: Sudoku) -> Field:
         empty_fields = self.find_empty_fields(board)
         if len(empty_fields) == 0:
             return None
         return sorted(map(lambda x: (x, len(x.get_domain())), empty_fields), key=lambda x: x[1])[0][0]
 
-    def find_empty_fields(self, board:Sudoku):
+    def find_empty_fields(self, board:Sudoku) -> list[Field]:
         empty_fields = []
         for row in range(len(board)):
             for col in range(len(board)):
@@ -104,7 +110,7 @@ class Game:
                     empty_fields.append(board[row][col])
         return empty_fields
 
-    def find_empty_field(self, board: Sudoku) -> tuple[int, int]:
+    def find_empty_field(self, board: Sudoku) -> Field:
         """Find next field in the Sudoku that has no value assigned yet
 
         Args:

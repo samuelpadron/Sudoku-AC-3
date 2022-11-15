@@ -57,23 +57,24 @@ class Game:
 
 
     def backtrack_search(self) -> bool:
-        field = self.find_empty_field(self.sudoku.board) #heuristic for empty field to be done
+        field = self.find_empty_field(self.sudoku.board)
+        #field = self.find_by_minimum_remaining_value_heuristic(self.sudoku.board) #heuristic for empty field to be done
         self.__moves__ += 1
         if field is None:
             return True
 
         for guess in field.get_domain(): #first use guesses from value heuristic 
-            if self.guess_is_valid(guess, row, col):
-                self.sudoku.field.set_value(guess)
+            if self.guess_is_valid(guess, field):
+                field.set_value(guess)
                 if self.backtrack_search():
                     return True
             
-            self.sudoku.board[row][col].value = 0
+            field.value = 0
 
         return False
     
     
-    def guess_is_valid(self, guess: int, row: int, col: int) -> bool:
+    def guess_is_valid(self, guess: int, field: Field) -> bool:
         """check if guess is allowed according to the rules of Sudoku
 
         Args:
@@ -84,24 +85,16 @@ class Game:
         Returns:
             bool: guess is valid
         """
-        horizontal_neighbours = list(map(lambda x: x.value, self.sudoku.board[row]))
-        if guess in horizontal_neighbours:
+        neighbours = list(map(lambda x: x.value, field.get_neighbours()))
+        if guess in neighbours:
             return False
-
-        vertical_neighbours = list(map(lambda x: x.value,[self.sudoku.board[i][col] for i in range(len(self.sudoku.board[0]))]))
-        if guess in vertical_neighbours:
-            return False
-
-        #square neighbours
-        for i in range((row//3) * 3, (row//3) * 3 + 3):
-            for j in range((col//3) * 3, (col//3) * 3 + 3):
-                if self.sudoku.board[i][j].value == guess:
-                    return False
-
         return True
 
     def find_by_minimum_remaining_value_heuristic(self, board: Sudoku):
-        return sorted(map(lambda x: (x, len(x.get_domain())), self.find_empty_fields(board)))[0]
+        empty_fields = self.find_empty_fields(board)
+        if len(empty_fields) == 0:
+            return None
+        return sorted(map(lambda x: (x, len(x.get_domain())), empty_fields), key=lambda x: x[1])[0][0]
 
     def find_empty_fields(self, board:Sudoku):
         empty_fields = []
@@ -109,6 +102,7 @@ class Game:
             for col in range(len(board)):
                 if board[row][col].value == 0:
                     empty_fields.append(board[row][col])
+        return empty_fields
 
     def find_empty_field(self, board: Sudoku) -> tuple[int, int]:
         """Find next field in the Sudoku that has no value assigned yet

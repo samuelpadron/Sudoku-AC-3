@@ -1,7 +1,8 @@
 from __future__ import annotations
 from .sudoku import Sudoku
 from queue import PriorityQueue
-from itertools import count, chain, product
+from itertools import count, product, groupby
+from operator import itemgetter
 from .field import Field
 
 class Game:
@@ -57,8 +58,8 @@ class Game:
 
 
     def backtrack_search(self) -> bool:
-        field = self.find_empty_field(self.sudoku.board) #no heuristic
-        #field = self.find_by_minimum_remaining_values_heuristic(self.sudoku.board) #heuristic for empty field to be done
+        #field = self.find_empty_field(self.sudoku.board) #no heuristic
+        field = self.find_by_minimum_remaining_values_heuristic(self.sudoku.board) #heuristic for empty field to be done
         #field = self.find_by_max_degree_heuristuc(self.sudoku.board)
         self.__moves__ += 1
         if field is None:
@@ -100,7 +101,9 @@ class Game:
         empty_fields = self.find_empty_fields(board)
         if len(empty_fields) == 0:
             return None
-        return sorted(map(lambda x: (x, len(x.get_domain())), empty_fields), key=lambda x: x[1])[0][0]
+        min_values_heuristic = list(map(lambda y: y[0], [list(group) for _, group in groupby(sorted(map(lambda x: (x, len(x.get_domain())), empty_fields), key=lambda x: x[1]), itemgetter(1))][0]))
+        max_degree_heuristic = sorted(map(lambda x: (x, len(list(filter(lambda x: x.get_value() == 0, x.get_neighbours())))), min_values_heuristic), key=lambda x: x[1])
+        return max_degree_heuristic[-1][0]
 
     def find_empty_fields(self, board:Sudoku) -> list[Field]:
         empty_fields = []

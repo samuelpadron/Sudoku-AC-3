@@ -15,7 +15,7 @@ class Game:
         print(self.sudoku)
 
     def solve(self, min_values_heuiristic:bool ,max_degree_heuristic: bool) -> bool:
-        """try to solve the sudoku by using ac-3 and backtracking
+        """summary: try to solve the sudoku by using ac-3 and backtracking
 
         Args:
             max_degree_heuristic (bool): boolean that says if we want to use the max degree heuristic
@@ -26,14 +26,15 @@ class Game:
         return self.ac_3() and self.backtrack_search(min_values_heuiristic, max_degree_heuristic)
     
     def revise(self, field_a: Field, field_b: Field) -> bool:
-        """_summary_
+        """summary: revise function used by ac-3, it checks whether it can remove the constraint, which is when field_b
+        has a fixed value and therefore field_a can remove that value from his domain.
 
         Args:
-            field_a (Field): _description_
-            field_b (Field): _description_
+            field_a (Field): field for which we are revising
+            field_b (Field): neighbour of field_a for which we check the constraint
 
         Returns:
-            bool: _description_
+            bool: true if value gets removed from domain of field_a, false otherwise
         """
         if len(field_b.get_domain()) == 1:
             return field_a.remove_from_domain(field_b.get_value())
@@ -42,7 +43,7 @@ class Game:
     
 
     def ac_3(self) -> bool:
-        """Implementation of AC-3 algorithm
+        """summary: Implementation of AC-3 algorithm
 
         Returns:
             bool: true if the constraints can be satisfied, else false
@@ -66,13 +67,14 @@ class Game:
 
 
     def backtrack_search(self, min_values_heuiristic, max_degree_heuristic: bool) -> bool:
-        """_summary_
+        """summary: backtrack search algorithm 
 
         Args:
-            max_degree_heuristic (bool): _description_
+            min_values_heuristic (bool): boolean meaning if we use the values heuristic
+            max_degree_heuristic (bool): boolean meaning if we use the max degree heuristic
 
         Returns:
-            bool: _description_
+            bool: true if backtracking found a solution, false otherwise
         """
         if min_values_heuiristic:
             field = self.find_by_minimum_remaining_values_heuristic(self.sudoku.board, max_degree_heuristic)
@@ -95,7 +97,7 @@ class Game:
     
     
     def guess_is_valid(self, guess: int, field: Field) -> bool:
-        """check if guess is allowed according to the rules of Sudoku
+        """summary: check if guess is allowed according to the rules of Sudoku
 
         Args:
             guess (_type_): value being guessed
@@ -123,7 +125,7 @@ class Game:
             board (Sudoku): the sudoku board for which we are doing backtracking
 
         Returns:
-            Field: 
+            Field: first field to be chosen based on this heuristic
         """
         try:
             return self.find_empty_fields(board)[0]
@@ -131,13 +133,16 @@ class Game:
             return None
 
     def find_by_minimum_remaining_values_heuristic(self, board: Sudoku, max_degree: bool) -> Field:
-        """summary: 
+        """summary: heuristic that returns the field based on heuristic, if max_degree is true also the max_degree heuristic is applied otherwise 
+        only the field are ordered only based on the least number of values they have in the domain. If also max degree is used, they are first ordered by min value
+        and then the ones with the same numbner of values in the domain are sorted by max number of constraintsm, whoich is in this case the number orf neighbours that do not have 
+        a fixed value yet.
 
         Args:
             board (Sudoku): the sudoku board for which we are doing backtracking
-
+            max_degree (bool): boolean, tryue if we want to also use max_degree heuristic after min value, false if we don't want to use it
         Returns:
-            Field: 
+            Field: the field that is chosen based on this heuristic 
         """
         empty_fields = self.find_empty_fields(board)
         if len(empty_fields) == 0:
@@ -149,7 +154,7 @@ class Game:
         return fields[0]
 
     def find_empty_fields(self, board:Sudoku) -> list[Field]:
-        """summary: put ijn a list in order from left to right and from top to bottom the empty fields in the sudoku 
+        """summary: put in a list in order from left to right and from top to bottom the empty fields in the sudoku 
         and return that list
 
         Args:

@@ -164,23 +164,6 @@ class Game:
                     empty_fields.append(board[row][col])
         return empty_fields
 
-    def find_empty_field(self, board: Sudoku) -> Field:
-        """summary: Find next field in the Sudoku that has no value assigned yet
-
-        Args:
-            board (Sudoku): the board to check
-
-        Returns:
-            tuple[int, int]: the coordinates of the field
-        """
-        for row in range(len(board)):
-            for col in range(len(board)):
-                if board[row][col].value == 0:
-                    return board[row][col]
-        
-        return None
-
-
     def list_is_valid(self, listOfElems: list[int]) -> bool:
         """summary: Check if given list contains any duplicates
 

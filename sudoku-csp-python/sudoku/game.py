@@ -5,6 +5,7 @@ from itertools import count, product, groupby
 from operator import itemgetter
 from .field import Field
 
+
 class Game:
     def __init__(self, sudoku: Sudoku) -> None:
         self.__moves__ = 0
@@ -13,20 +14,27 @@ class Game:
     def show_sudoku(self) -> None:
         print(self.sudoku)
 
-    def solve(self) -> bool:
-        return self.ac_3() and self.backtrack_search()
+    def solve(self, min_values_heuiristic:bool ,max_degree_heuristic: bool) -> bool:
+        """try to solve the sudoku by using ac-3 and backtracking
+
+        Args:
+            max_degree_heuristic (bool): boolean that says if we want to use the max degree heuristic
+
+        Returns:
+            bool: true if we were able to solve, false otherwise
+        """
+        return self.ac_3() and self.backtrack_search(min_values_heuiristic, max_degree_heuristic)
     
     def revise(self, field_a: Field, field_b: Field) -> bool:
-        #neighbour1, neighbour2, neighbour3 = field_a.get_neighbours()[0:8], field_a.get_neighbours()[8:16], field_a.get_neighbours()[16:24]
-        #for neighbours in [neighbour1, neighbour2, neighbour3]:
-        #    taken_values = list(set(list(chain.from_iterable(map(lambda x: x.get_domain(),neighbours)))))
-#
-        #    if len(taken_values) == 8:
-        #        res = [value for value in range(1,10) if value not in taken_values] #get missing value in a list
-        #        field_a.set_domain(res)
-        #        field_a.set_value(res[0])
-        #        return True
+        """_summary_
 
+        Args:
+            field_a (Field): _description_
+            field_b (Field): _description_
+
+        Returns:
+            bool: _description_
+        """
         if len(field_b.get_domain()) == 1:
             return field_a.remove_from_domain(field_b.get_value())
             
@@ -57,10 +65,21 @@ class Game:
         return True
 
 
-    def backtrack_search(self) -> bool:
-        #field = self.find_empty_field(self.sudoku.board) #no heuristic
-        field = self.find_by_minimum_remaining_values_heuristic(self.sudoku.board) #heuristic for empty field to be done
-        #field = self.find_by_max_degree_heuristuc(self.sudoku.board)
+    def backtrack_search(self, min_values_heuiristic, max_degree_heuristic: bool) -> bool:
+        """_summary_
+
+        Args:
+            max_degree_heuristic (bool): _description_
+
+        Returns:
+            bool: _description_
+        """
+        if min_values_heuiristic:
+            field = self.find_by_minimum_remaining_values_heuristic(self.sudoku.board, max_degree_heuristic)
+        else: 
+            field = self.find_by_order_heuristic(self.sudoku.board)
+
+
         self.__moves__ += 1
         if field is None:
             return True
@@ -68,7 +87,7 @@ class Game:
         for guess in field.get_domain(): #first use guesses from value heuristic 
             if self.guess_is_valid(guess, field):
                 field.set_value(guess)
-                if self.backtrack_search():
+                if self.backtrack_search(min_values_heuiristic, max_degree_heuristic):
                     return True
             
             field.value = 0
@@ -91,21 +110,54 @@ class Game:
             return False
         return True
 
-    def find_by_max_degree_heuristuc(self, board: Sudoku) -> Field:
+    def find_by_max_degree_heuristuc(self, board: Sudoku) -> Field: #DO NOT NEED THIS ANYMORE
         empty_fields = self.find_empty_fields(board)
         if len(empty_fields) == 0:
             return None
         return sorted(map(lambda x: (x, len(list(filter(lambda x: x.get_value() == 0, x.get_neighbours())))), empty_fields), key=lambda x: x[1])[-1][0]
 
-    def find_by_minimum_remaining_values_heuristic(self, board: Sudoku) -> Field:
+    def find_by_order_heuristic(self, board: Sudoku) -> Field:
+        """summary: return the first empty Field by index order (so top left first) in the sudoku board
+
+        Args:
+            board (Sudoku): the sudoku board for which we are doing backtracking
+
+        Returns:
+            Field: 
+        """
+        try:
+            return self.find_empty_fields(board)[0]
+        except:
+            return None
+
+    def find_by_minimum_remaining_values_heuristic(self, board: Sudoku, max_degree: bool) -> Field:
+        """summary: 
+
+        Args:
+            board (Sudoku): the sudoku board for which we are doing backtracking
+
+        Returns:
+            Field: 
+        """
         empty_fields = self.find_empty_fields(board)
         if len(empty_fields) == 0:
             return None
-        min_values_heuristic = list(map(lambda y: y[0], [list(group) for _, group in groupby(sorted(map(lambda x: (x, len(x.get_domain())), empty_fields), key=lambda x: x[1]), itemgetter(1))][0]))
-        max_degree_heuristic = sorted(map(lambda x: (x, len(list(filter(lambda x: x.get_value() == 0, x.get_neighbours())))), min_values_heuristic), key=lambda x: x[1])
-        return max_degree_heuristic[-1][0]
+        fields  = list(map(lambda y: y[0], [list(group) for _, group in groupby(sorted(map(lambda x: (x, len(x.get_domain())), empty_fields), key=lambda x: x[1]), itemgetter(1))][0]))
+        if max_degree:
+            fields = [x[0] for x in sorted(map(lambda x: (x, len(list(filter(lambda x: x.get_value() == 0, x.get_neighbours())))), fields), key=lambda x: x[1], reverse=False)]
+            
+        return fields[0]
 
     def find_empty_fields(self, board:Sudoku) -> list[Field]:
+        """summary: put ijn a list in order from left to right and from top to bottom the empty fields in the sudoku 
+        and return that list
+
+        Args:
+            board (Sudoku): the sudoku board gfor which we are doing backtracking
+
+        Returns:
+            list[Field]: list of empty fields in the sudoku board
+        """
         empty_fields = []
         for row in range(len(board)):
             for col in range(len(board)):
@@ -114,7 +166,7 @@ class Game:
         return empty_fields
 
     def find_empty_field(self, board: Sudoku) -> Field:
-        """Find next field in the Sudoku that has no value assigned yet
+        """summary: Find next field in the Sudoku that has no value assigned yet
 
         Args:
             board (Sudoku): the board to check
@@ -130,16 +182,21 @@ class Game:
         return None
 
 
-    def list_is_valid(self, listOfElems) -> bool:
-        ''' Check if given list contains any duplicates '''
-        if len(listOfElems) == len(set(listOfElems)):
-            return True
-        else:
-            return False
+    def list_is_valid(self, listOfElems: list[int]) -> bool:
+        """summary: Check if given list contains any duplicates
+
+        Args:
+            listOfElems (list[int]): _description_
+
+        Returns:
+            bool: true if it does not contain any duplicates, false otherwise
+        """
+        return len(listOfElems) == len(set(listOfElems))
+
 
 
     def valid_solution(self) -> bool:
-        """Checks the validity of a sudoku solution
+        """summary: Checks the validity of a sudoku solution
 
         Returns:
             bool: true if the sudoku solution is correct

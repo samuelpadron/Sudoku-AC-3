@@ -55,6 +55,16 @@ class Sudoku:
         return grid            
 
     def add_vertical_neighbours(self, col:int, row:int, grid:list[list[Field]]) -> list[Field]:
+        """summary: add the neighbours that are in the same column of the field at indexes col row
+
+        Args:
+            col (int): 
+            row (int): 
+            grid (list[list[Field]]): 
+
+        Returns:
+            list[Field]: the list of fields in the same column
+        """
         neighbours = [el[col] for el in grid]
         if row < len(grid):
             neighbours = neighbours[0:row] + neighbours[row+1:]    
@@ -64,6 +74,16 @@ class Sudoku:
         return neighbours
 
     def add_horizontal_neighbours(self, col:int, row: int, grid:list[list[Field]]):
+        """summary: add the neighbours that are in the same row of the field at indexes col row
+
+        Args:
+            col (int): _description_
+            row (int): _description_
+            grid (list[list[Field]]): _description_
+
+        Returns:
+            _type_: the list of fields in the same row
+        """
         neighbours = grid[row]
         if col < len(grid[0]):
             neighbours = neighbours[0:col] + neighbours[col+1:]
@@ -73,6 +93,16 @@ class Sudoku:
         return neighbours
 
     def add_square_neighbours(self, col:int, row:int, grid:list[list[Field]]):
+        """summary: add the neighbours that are in the same square of the field at indexes col row
+
+        Args:
+            col (int): _description_
+            row (int): _description_
+            grid (list[list[Field]]): _description_
+
+        Returns:
+            _type_: the list of fields in the same square
+        """
         neighbours = []
         square = (int(row//3), int(col//3))
         for i in range(len(grid)):
@@ -84,6 +114,11 @@ class Sudoku:
 
       
     def add_neighbours(self, grid: list[list[Field]]) -> None:
+        """summary: add the neihghbours to each field
+
+        Args:
+            grid (list[list[Field]]): the grid of fields
+        """
         for row in range(len(grid)):
             for col in range(len(grid[0])):
                 neighbours = []

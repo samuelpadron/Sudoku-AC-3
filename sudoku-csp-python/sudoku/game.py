@@ -112,12 +112,6 @@ class Game:
             return False
         return True
 
-    def find_by_max_degree_heuristuc(self, board: Sudoku) -> Field: #DO NOT NEED THIS ANYMORE
-        empty_fields = self.find_empty_fields(board)
-        if len(empty_fields) == 0:
-            return None
-        return sorted(map(lambda x: (x, len(list(filter(lambda x: x.get_value() == 0, x.get_neighbours())))), empty_fields), key=lambda x: x[1])[-1][0]
-
     def find_by_order_heuristic(self, board: Sudoku) -> Field:
         """summary: return the first empty Field by index order (so top left first) in the sudoku board
 

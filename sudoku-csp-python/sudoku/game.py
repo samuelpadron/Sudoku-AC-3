@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional
 from .sudoku import Sudoku
 from queue import PriorityQueue
 from itertools import count, product, groupby
@@ -14,7 +15,7 @@ class Game:
     def show_sudoku(self) -> None:
         print(self.sudoku)
 
-    def solve(self, min_values_heuiristic:bool ,max_degree_heuristic: bool) -> bool:
+    def solve(self, min_values_heuiristic: bool ,max_degree_heuristic: bool) -> bool:
         """summary: try to solve the sudoku by using ac-3 and backtracking
 
         Args:
@@ -66,7 +67,7 @@ class Game:
         return True
 
 
-    def backtrack_search(self, min_values_heuiristic, max_degree_heuristic: bool) -> bool:
+    def backtrack_search(self, min_values_heuiristic: bool, max_degree_heuristic: bool) -> bool:
         """summary: backtrack search algorithm 
 
         Args:
@@ -112,7 +113,7 @@ class Game:
             return False
         return True
 
-    def find_by_order_heuristic(self, board: Sudoku) -> Field:
+    def find_by_order_heuristic(self, board: Sudoku) -> Optional[Field]:
         """summary: return the first empty Field by index order (so top left first) in the sudoku board
 
         Args:
@@ -126,7 +127,7 @@ class Game:
         except:
             return None
 
-    def find_by_minimum_remaining_values_heuristic(self, board: Sudoku, max_degree: bool) -> Field:
+    def find_by_minimum_remaining_values_heuristic(self, board: Sudoku, max_degree: bool) ->  Optional[Field]:
         """summary: heuristic that returns the field based on heuristic, if max_degree is true also the max_degree heuristic is applied otherwise 
         only the field are ordered only based on the least number of values they have in the domain. If also max degree is used, they are first ordered by min value
         and then the ones with the same numbner of values in the domain are sorted by max number of constraintsm, whoich is in this case the number orf neighbours that do not have 
